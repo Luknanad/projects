@@ -273,8 +273,8 @@ TimeGenerated,AlertName,Account,LogonType,Computer,IPAddress,Severity
 
 ### Screenshots
 
-![Alert Triggered](screenshots/alert_triggered.png)
-*Sentinel alert card for local-signin.*
+<img width="1864" height="452" alt="image" src="https://github.com/user-attachments/assets/0a09259e-6e2b-4138-9544-9c947ccc904a" />
+
 
 ![Incident View](screenshots/incident_view.png)
 *Incident investigation pane.*
