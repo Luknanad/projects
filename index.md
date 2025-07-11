@@ -6,7 +6,7 @@
 
 # Security Monitoring Lab with Microsoft Sentinel
 
-This project deploys a Windows Server 2022 VM in Azure, forwards its Windows SecurityEvent logs into Microsoft Sentinel, applies custom KQL detection rules to spot suspicious login activity, and uses an Azure Logic Apps playbook to send email alerts.
+This project deploys a Windows Server 2022 VM in Azure, forwards its Windows SecurityEvent logs into Microsoft Sentinel, applies custom KQL detection rules to spot suspicious login activity.
 
 ## Objectives
 
