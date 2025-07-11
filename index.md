@@ -131,106 +131,92 @@ VBoxManage modifyvm "REMnux" --nic1 natnetwork --nat-network1 MalwareNet
 FlareVM> ping 192.168.56.102
 REMnux> ping 192.168.56.101
 
-<!-- index.html -->
+<hr>
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Emotet Malware Analysis</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      line-height: 1.6;
-      background-color: #f4f4f4;
-      padding: 20px;
-      color: #333;
-    }
-    pre {
-      background-color: #272822;
-      color: #f8f8f2;
-      padding: 10px;
-      overflow-x: auto;
-    }
-    code {
-      font-family: "Courier New", Courier, monospace;
-    }
-    h2 {
-      color: #2c3e50;
-    }
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-top: 10px;
-    }
-    th, td {
-      padding: 10px;
-      border: 1px solid #ddd;
-    }
-    img {
-      margin: 10px 0;
-      max-width: 100%;
-      height: auto;
-      border: 1px solid #ccc;
-    }
-  </style>
-</head>
-<body>
+<h1>Security Monitoring Lab with Microsoft Sentinel</h1>
 
-  <h1>Malware Analysis Workflow</h1>
+<p>
+  This project deploys a Windows Server 2022 VM in Azure, forwards its Windows SecurityEvent logs into Microsoft Sentinel, and applies custom KQL detection rules to spot suspicious login activity.
+</p>
 
-  <h2>Static Analysis</h2>
-  <pre><code># PeStudio examination:
-pestudio.exe malware.exe
+<h2>Objectives</h2>
+<blockquote>
+  Build a basic SIEM pipeline to detect Initial Access and Credential Access techniques and demonstrate end-to-end workflow.
+</blockquote>
 
-# YARA scanning:
-yara -r rules.yar malware.exe</code></pre>
+<ol>
+  <li>Provision Azure infrastructure: VM, Log Analytics workspace, and Sentinel onboard.</li>
+  <li>Install Azure Monitor Agent and configure Data Collection Rule for Security events.</li>
+  <li>Create KQL rules to detect:
+    <ul>
+      <li>Successful local (keyboard) logins (Event 4624, LogonType 2)</li>
+      <li>RDP logins (Event 4624, LogonType 10)</li>
+      <li>Brute‑force attempts (&gt;5 failures then one success)</li>
+      <li>Admin‑group membership changes (Events 4728, 4729, 4732, 4733)</li>
+    </ul>
+  </li>
+  <li>Validate with sample alerts and screenshots.</li>
+</ol>
 
-  <h2>Dynamic Analysis</h2>
-  <pre><code># CAPEv2 sandbox submission:
-python3 cape2.py submit malware.exe
+<h2>Detection Rules (KQL)</h2>
 
-# Procmon monitoring:
-Procmon.exe /BackingFile log.pml</code></pre>
+<h3>01 - Local Sign-In</h3>
+<pre><code>// Local keyboard login (T1078.002)
+SecurityEvent
+| where EventID == 4624 and LogonType == 2
+| where Account !contains "SYSTEM"
+| project TimeGenerated, Account, Computer
+</code></pre>
 
-  <h2>Sample Analysis: Emotet Trojan</h2>
+<h3>02 - RDP Sign-In</h3>
+<pre><code>// RDP login (T1078.004)
+SecurityEvent
+| where EventID == 4624 and LogonType == 10
+| where Account !contains "SYSTEM"
+| project TimeGenerated, Account, Computer, IPAddress
+</code></pre>
 
-  <h3>Findings</h3>
-  <ul>
-    <li><strong>Persistence:</strong> HKCU\Software\Microsoft\Windows\CurrentVersion\Run\\UpdateCheck</li>
-    <li><strong>C2 Communication:</strong> 185.130.105[.]93:443</li>
-    <li><strong>Payload Retrieval:</strong> GET /wp-content/themes/twentyten/update.php</li>
-  </ul>
+<h3>03 - Brute-force Detection</h3>
+<pre><code>// Brute-force (>5 failures then success, T1110)
+let failed = SecurityEvent
+  | where EventID == 4625
+  | summarize count() by Account, bin(TimeGenerated, 15m);
+let success = SecurityEvent
+  | where EventID == 4624 and Account !contains "SYSTEM"
+  | project Account, TimeGenerated;
+failed
+| where count_ > 5
+| join kind=inner success on Account
+| where success.TimeGenerated > failed.TimeGenerated
+</code></pre>
 
-  <h3>IOCs</h3>
-  <table>
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Value</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td>Domain</td>
-        <td>update.businesshost[.]top</td>
-      </tr>
-      <tr>
-        <td>IP</td>
-        <td>185.130.105[.]93</td>
-      </tr>
-      <tr>
-        <td>Registry</td>
-        <td>HKCU\Software\...\Run\\UpdateCheck</td>
-      </tr>
-    </tbody>
-  </table>
+<h3>04 - Admin Group Changes</h3>
+<pre><code>// Admin group changes (T1136)
+SecurityEvent
+| where EventID in (4728, 4729, 4732, 4733)
+| where TargetUserName == "Administrators"
+| project TimeGenerated, SubjectAccount, TargetAccount
+</code></pre>
 
-  <h3>Lab Screenshots</h3>
-  <img src="https://github.com/user-attachments/assets/flarevm-screenshot.png" alt="Flare VM Analysis">
-  <img src="https://github.com/user-attachments/assets/wireshark-capture.png" alt="Wireshark Capture">
+<h2>Alerts Export</h2>
+<pre><code>TimeGenerated,AlertName,Account,LogonType,Computer,IPAddress,Severity
+2025-07-10T08:23:15Z,Local Sign‑In,Giorgi,2,sec-lab-vm,10.0.0.4,Medium
+2025-07-10T09:01:07Z,Brute‑Force Attempt,Luka,0,sec-lab-vm,192.168.1.10,High
+2025-07-10T09:01:53Z,Local Sign‑In,Luka,2,sec-lab-vm,192.168.1.10,Medium
+</code></pre>
 
-</body>
-</html>
+<h2>Screenshots</h2>
+<img width="1864" height="452" alt="Sentinel Dashboard" src="https://github.com/user-attachments/assets/0a09259e-6e2b-4138-9544-9c947ccc904a" />
+<img width="1808" height="381" alt="KQL Query Result" src="https://github.com/user-attachments/assets/4a6a20bc-5c9b-45e2-a599-22cf8561c9c7" />
+
+<h2>Outcome</h2>
+<p>
+  Successfully built a lightweight SIEM solution to detect key TTPs from MITRE ATT&CK (Initial Access and Credential Access). This project demonstrates how to leverage Azure-native tools for:
+</p>
+<ul>
+  <li>Security log collection and aggregation</li>
+  <li>Threat detection with custom KQL analytics rules</li>
+  <li>Alerting and basic incident response automation</li>
+</ul>
+
 
