@@ -93,6 +93,6 @@ TimeGenerated,AlertName,Account,LogonType,Computer,IPAddress,Severity
   <li>Security log collection and aggregation</li>
   <li>Threat detection with custom KQL analytics rules</li>
   <li>Alerting and basic incident response automation</li>
-  <li>Visual investigation and correlation through Sentinel’s incident pane</li>
+  
 </ul>
 
