@@ -10,7 +10,7 @@ This project deploys a Windows Server 2022 VM in Azure, forwards its Windows Se
 
 ## Objectives
 
-> Built a basic SIEM pipeline to detect Initial Access,Credential Access techniques and demonstrate end-to-end workflow.
+> Build a basic SIEM pipeline to detect Initial Access,Credential Access techniques and demonstrate end-to-end workflow.
 
 1. Provision Azure infrastructure: VM, Log Analytics workspace, and Sentinel onboard.
 2. Install Azure Monitor Agent and configure Data Collection Rule for Security events.
