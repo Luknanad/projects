@@ -2,7 +2,7 @@
 
 ---
 
-## layout: default
+
 
 # Security Monitoring Lab with Microsoft Sentinel
 
