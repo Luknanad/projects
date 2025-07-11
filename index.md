@@ -233,33 +233,8 @@ SecurityEvent
 
 ---
 
-## Automated Response Playbook
 
-*This Logic App sends an email whenever Sentinel creates an incident.*
-
-```json
-{
-  "definition": {
-    "triggers": {
-      "When_an_incident_is_created": { "type": "HttpRequest", "inputs": {} }
-    },
-    "actions": {
-      "Send_an_email": {
-        "type": "Office365.SendEmail",
-        "inputs": {
-          "To": "you@example.com",
-          "Subject": "@{triggerBody()?['properties']['alertRuleName']}",
-          "Body": "Alert fired at @{triggerBody()?['properties']['timeGenerated']}"
-        }
-      }
-    }
-  }
-}
-```
-
----
-
-## Sample Alerts Export
+##  Alerts Export
 
 ```csv
 TimeGenerated,AlertName,Account,LogonType,Computer,IPAddress,Severity
