@@ -97,3 +97,36 @@ TimeGenerated,AlertName,Account,LogonType,Computer,IPAddress,Severity
   
 </ul>
 
+<!-- index.html -->
+
+---
+
+# Malware Analysis Project 101  
+*Beginner-friendly malware analysis lab with Flare VM + REMnux*
+
+## Overview
+This project creates an isolated malware analysis environment using VirtualBox with Flare VM (Windows) and REMnux (Linux). It demonstrates static and dynamic analysis techniques to identify malware behaviors and extract IOCs.
+
+## Objectives
+> Build practical malware analysis skills in a safe environment
+
+1. Create isolated VirtualBox network for malware analysis
+2. Configure Flare VM (Windows) and REMnux (Linux) tools
+3. Analyze malware samples using hybrid techniques
+4. Document findings in professional reports
+
+---
+
+## Lab Configuration
+
+```bash
+# Create isolated network:
+VBoxManage natnetwork add --netname MalwareNet --network "192.168.56.0/24"
+
+# Assign VMs to network:
+VBoxManage modifyvm "FlareVM" --nic1 natnetwork --nat-network1 MalwareNet
+VBoxManage modifyvm "REMnux" --nic1 natnetwork --nat-network1 MalwareNet
+
+# Verify connectivity:
+FlareVM> ping 192.168.56.102
+REMnux> ping 192.168.56.101
