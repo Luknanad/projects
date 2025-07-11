@@ -7,62 +7,44 @@ theme: jekyll-theme-hacker
 layout: default
 ---
 
-# Security Monitoring with Microsoft Sentinel
+---
+layout: default
+---
 
-A beginner‑to‑intermediate SIEM project showing how to detect and alert on Windows login events using Microsoft Sentinel on Azure.
+# Security Monitoring Lab with Microsoft Sentinel
+
+This project shows how to deploy a Windows Server VM in Azure, stream security events into Microsoft Sentinel, write KQL detection rules, and automate alerts with Logic Apps—all on one page.
+
+## Project Overview
+
+> A step-by-step SIEM use case, from infrastructure to alerting, focused on detecting suspicious login activity (Initial Access via MITRE ATT&CK).
+
+Core components:
+
+* Azure Windows Server 2022 VM  
+* Azure Monitor Agent (AMA) & Data Collection Rule  
+* Log Analytics workspace  
+* Microsoft Sentinel analytics rules  
+* Azure Logic App playbook for email alerts  
 
 ---
 
-## 🚀 Live Demo & Repo
+## File Structure
 
-**GitHub Repo:** [sentinel-log-alerting-project](https://github.com/<your‑username>/sentinel-log-alerting-project)
+```plaintext
+sentinel-log-alerting-project/
+├── iac/
+│   └── main.bicep
+├── rules/
+│   ├── 01-local-signin.kql
+│   ├── 02-rdp-signin.kql
+│   ├── 03-bruteforce.kql
+│   └── 04-admin-changes.kql
+├── logic-app/
+│   └── send-email-playbook.json
+├── screenshots/
+│   ├── alert_triggered.png
+│   └── incident_view.png
+└── sample-alerts.csv
 
----
 
-## 🔍 Project Highlights
-
-- **VM & Logs**: Windows Server 2022 VM → Azure Monitor Agent → Log Analytics  
-- **SIEM**: Microsoft Sentinel Onboarded  
-- **Detection Rules** (KQL):
-  1. **Local Login** (`01-local-signin.kql`):  
-     ```kql
-     // Detect successful local keyboard login
-     SecurityEvent
-     | where EventID == 4624
-     | where LogonType == 2
-     | where Account !contains "SYSTEM"
-     | project TimeGenerated, Account, Computer
-     ```
-  2. **Brute‑Force** (`03-bruteforce.kql`):  
-     ```kql
-     // 5+ failed logins in 15m, then success
-     let failed = SecurityEvent
-       | where EventID == 4625
-       | summarize count() by Account, bin(TimeGenerated, 15m);
-     let success = SecurityEvent
-       | where EventID == 4624
-       | project Account, TimeGenerated;
-     failed
-       | where count_ > 5
-       | join kind=inner success on Account
-       | where success.TimeGenerated > failed.TimeGenerated
-     ```
-- **Automated Response**: Logic App playbook sends an email when an alert fires.
-
----
-
-## 📸 Screenshots
-
-<div style="display:flex; gap:1rem; flex-wrap:wrap;">
-  <img src="screenshots/alert_triggered.png" alt="Sentinel Alert" width="300">
-  <img src="screenshots/incident.png"      alt="Incident View" width="300">
-</div>
-
----
-
-## 🛠️ How to Reproduce
-
-1. **Clone**  
-   ```bash
-   git clone https://github.com/<your‑username>/sentinel-log-alerting-project.git
-   cd sentinel-log-alerting-project
