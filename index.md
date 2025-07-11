@@ -94,7 +94,7 @@ TimeGenerated,AlertName,Account,LogonType,Computer,IPAddress,Severity
     <ul>
       <li>Security log collection and aggregation</li>
       <li>Threat detection with KQL</li>
-      <li>Alerting and basic incident response automation</li>
+      
     </ul>
   </p>
 </section>
