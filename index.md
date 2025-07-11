@@ -10,7 +10,7 @@ This project deploys a Windows Server 2022 VM in Azure, forwards its Windows Se
 
 ## Objectives
 
-> Build a basic SIEM pipeline to detect Initial Access and Credential Access techniques, automate notifications, and demonstrate end-to-end workflow.
+> Built a basic SIEM pipeline to detect Initial Access,Credential Access techniques and demonstrate end-to-end workflow.
 
 1. Provision Azure infrastructure: VM, Log Analytics workspace, and Sentinel onboard.
 2. Install Azure Monitor Agent and configure Data Collection Rule for Security events.
@@ -20,8 +20,7 @@ This project deploys a Windows Server 2022 VM in Azure, forwards its Windows Se
    * RDP logins (Event 4624, LogonType 10)
    * Brute‑force attempts (>5 failures then one success)
    * Admin‑group membership changes (Events 4728, 4729, 4732, 4733)
-4. Automate email alerts with a Logic Apps playbook.
-5. Validate with sample alerts and screenshots.
+4. Validate with sample alerts and screenshots.
 
 ---
 
@@ -89,10 +88,13 @@ TimeGenerated,AlertName,Account,LogonType,Computer,IPAddress,Severity
 ![Incident View](screenshots/incident_view.png)
 *Incident investigation pane.*
 
-```
-Long, single-line code blocks scroll horizontally.
-```
-
-```
-End of project page.
-```
+  <h3 style="font-size: 20px; color: #34495e;">Outcome</h3>
+  <p>
+    Successfully built a lightweight SIEM solution to detect key TTPs from MITRE ATT&CK (Initial Access and Credential Access). This project demonstrates how to leverage Azure-native tools for:
+    <ul>
+      <li>Security log collection and aggregation</li>
+      <li>Threat detection with KQL</li>
+      <li>Alerting and basic incident response automation</li>
+    </ul>
+  </p>
+</section>
