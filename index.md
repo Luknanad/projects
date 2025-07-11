@@ -85,16 +85,14 @@ TimeGenerated,AlertName,Account,LogonType,Computer,IPAddress,Severity
 <img width="1864" height="452" alt="image" src="https://github.com/user-attachments/assets/0a09259e-6e2b-4138-9544-9c947ccc904a" />
 
 
-![Incident View](screenshots/incident_view.png)
-*Incident investigation pane.*
+<h3 style="font-size: 20px; color: #34495e;">Outcome</h3>
+<p>
+  Successfully built a lightweight SIEM solution to detect key TTPs from MITRE ATT&CK (Initial Access and Credential Access). This project demonstrates how to leverage Azure-native tools for:
+</p>
+<ul>
+  <li>Security log collection and aggregation</li>
+  <li>Threat detection with custom KQL analytics rules</li>
+  <li>Alerting and basic incident response automation</li>
+  <li>Visual investigation and correlation through Sentinel’s incident pane</li>
+</ul>
 
-  <h3 style="font-size: 20px; color: #34495e;">Outcome</h3>
-  <p>
-    Successfully built a lightweight SIEM solution to detect key TTPs from MITRE ATT&CK (Initial Access and Credential Access). This project demonstrates how to leverage Azure-native tools for:
-    <ul>
-      <li>Security log collection and aggregation</li>
-      <li>Threat detection with KQL</li>
-      
-    </ul>
-  </p>
-</section>
