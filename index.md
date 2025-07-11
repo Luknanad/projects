@@ -1,123 +1,164 @@
+<!-- index.html -->
+
 ---
-layout: default
+
+## layout: default
+
+# Security Monitoring Lab with Microsoft Sentinel
+
+This project deploys a Windows Server 2022 VM in Azure, forwards its Windows SecurityEvent logs into Microsoft Sentinel, applies custom KQL detection rules to spot suspicious login activity, and uses an Azure Logic Apps playbook to send email alerts.
+
+## Objectives
+
+> Build a basic SIEM pipeline to detect Initial Access and Credential Access techniques, automate notifications, and demonstrate end-to-end workflow.
+
+1. Provision Azure infrastructure: VM, Log Analytics workspace, and Sentinel onboard.
+2. Install Azure Monitor Agent and configure Data Collection Rule for Security events.
+3. Create KQL rules to detect:
+
+   * Successful local (keyboard) logins (Event 4624, LogonType 2)
+   * RDP logins (Event 4624, LogonType 10)
+   * Brute‑force attempts (>5 failures then one success)
+   * Admin‑group membership changes (Events 4728, 4729, 4732, 4733)
+4. Automate email alerts with a Logic Apps playbook.
+5. Validate with sample alerts and screenshots.
+
 ---
 
-Text can be **bold**, _italic_, ~~strikethrough~~ or `keyword`.
+## Infrastructure (Bicep)
 
-[Link to another page](./another-page.html).
+```bicep
+// Deploy VM, workspace, and Sentinel
+param location string = resourceGroup().location
+param adminUsername string
+@secure() param adminPassword string
 
-There should be whitespace between paragraphs.
+resource vm 'Microsoft.Compute/virtualMachines@2021-07-01' = {
+  name: 'sec-lab-vm'
+  location: location
+  properties: {
+    hardwareProfile: { vmSize: 'Standard_B1s' }
+    osProfile: { computerName: 'sec-lab-vm', adminUsername: adminUsername, adminPassword: adminPassword }
+    storageProfile: {
+      imageReference: { publisher: 'MicrosoftWindowsServer', offer: 'WindowsServer', sku: '2022-Datacenter', version: 'latest' }
+      osDisk: { createOption: 'FromImage' }
+    }
+    networkProfile: { networkInterfaces: [{ id: nic.id }] }
+  }
+}
 
-There should be whitespace between paragraphs. We recommend including a README, or a file with information about your project.
+resource workspace 'Microsoft.OperationalInsights/workspaces@2021-06-01' = {
+  name: 'secLab-law'
+  location: location
+}
 
-# Header 1
+resource dcr 'Microsoft.Insights/dataCollectionRules@2021-09-01' = {
+  name: 'secLab-DCR'
+  location: location
+  properties: {
+    dataSources: { windowsEvents: [{ name: 'SecurityEvents', streams: ['Security'] }] }
+    dataFlows: [{ streams: ['Security'], destinations: [{ workspaceId: workspace.id }] }]
+  }
+}
 
-This is a normal paragraph following a header. GitHub is a code hosting platform for version control and collaboration. It lets you and others work together on projects from anywhere.
-
-## Header 2
-
-> This is a blockquote following a header.
->
-> When something is important enough, you do it even if the odds are not in your favor.
-
-### Header 3
-
-```js
-// Javascript code with syntax highlighting.
-var fun = function lang(l) {
-  dateformat.i18n = require('./lang/' + l)
-  return true;
+resource sentinel 'Microsoft.SecurityInsights/sentinelOnboardingStates@2021-10-01' = {
+  name: workspace.name
+  properties: { state: 'Onboarded' }
 }
 ```
 
-```ruby
-# Ruby code with syntax highlighting
-GitHubPages::Dependencies.gems.each do |gem, version|
-  s.add_dependency(gem, "= #{version}")
-end
+---
+
+## Detection Rules (KQL)
+
+```kql
+// 01-local-signin.kql: Local keyboard login (T1078.002)
+SecurityEvent
+| where EventID == 4624 and LogonType == 2
+| where Account !contains "SYSTEM"
+| project TimeGenerated, Account, Computer
 ```
 
-#### Header 4
-
-*   This is an unordered list following a header.
-*   This is an unordered list following a header.
-*   This is an unordered list following a header.
-
-##### Header 5
-
-1.  This is an ordered list following a header.
-2.  This is an ordered list following a header.
-3.  This is an ordered list following a header.
-
-###### Header 6
-
-| head1        | head two          | three |
-|:-------------|:------------------|:------|
-| ok           | good swedish fish | nice  |
-| out of stock | good and plenty   | nice  |
-| ok           | good `oreos`      | hmm   |
-| ok           | good `zoute` drop | yumm  |
-
-### There's a horizontal rule below this.
-
-* * *
-
-### Here is an unordered list:
-
-*   Item foo
-*   Item bar
-*   Item baz
-*   Item zip
-
-### And an ordered list:
-
-1.  Item one
-1.  Item two
-1.  Item three
-1.  Item four
-
-### And a nested list:
-
-- level 1 item
-  - level 2 item
-  - level 2 item
-    - level 3 item
-    - level 3 item
-- level 1 item
-  - level 2 item
-  - level 2 item
-  - level 2 item
-- level 1 item
-  - level 2 item
-  - level 2 item
-- level 1 item
-
-### Small image
-
-![Octocat](https://github.githubassets.com/images/icons/emoji/octocat.png)
-
-### Large image
-
-![Branching](https://guides.github.com/activities/hello-world/branching.png)
-
-
-### Definition lists can be used with HTML syntax.
-
-<dl>
-<dt>Name</dt>
-<dd>Godzilla</dd>
-<dt>Born</dt>
-<dd>1952</dd>
-<dt>Birthplace</dt>
-<dd>Japan</dd>
-<dt>Color</dt>
-<dd>Green</dd>
-</dl>
-
-```
-Long, single-line code blocks should not wrap. They should horizontally scroll if they are too long. This line should be long enough to demonstrate this.
+```kql
+// 02-rdp-signin.kql: RDP login (T1078.004)
+SecurityEvent
+| where EventID == 4624 and LogonType == 10
+| where Account !contains "SYSTEM"
+| project TimeGenerated, Account, Computer, IPAddress
 ```
 
+```kql
+// 03-bruteforce.kql: Brute‑force (>5 failures then success, T1110)
+let failed = SecurityEvent
+  | where EventID == 4625
+  | summarize count() by Account, bin(TimeGenerated, 15m);
+let success = SecurityEvent
+  | where EventID == 4624 and Account !contains "SYSTEM"
+  | project Account, TimeGenerated;
+failed
+| where count_ > 5
+| join kind=inner success on Account
+| where success.TimeGenerated > failed.TimeGenerated
 ```
-The final element.
+
+```kql
+// 04-admin-changes.kql: Admin group changes (T1136)
+SecurityEvent
+| where EventID in (4728, 4729, 4732, 4733)
+| where TargetUserName == "Administrators"
+| project TimeGenerated, SubjectAccount, TargetAccount
+```
+
+---
+
+## Automated Response Playbook
+
+*This Logic App sends an email whenever Sentinel creates an incident.*
+
+```json
+{
+  "definition": {
+    "triggers": {
+      "When_an_incident_is_created": { "type": "HttpRequest", "inputs": {} }
+    },
+    "actions": {
+      "Send_an_email": {
+        "type": "Office365.SendEmail",
+        "inputs": {
+          "To": "you@example.com",
+          "Subject": "@{triggerBody()?['properties']['alertRuleName']}",
+          "Body": "Alert fired at @{triggerBody()?['properties']['timeGenerated']}"
+        }
+      }
+    }
+  }
+}
+```
+
+---
+
+## Sample Alerts Export
+
+```csv
+TimeGenerated,Account,LogonType,Computer,IPAddress
+2025-07-06T10:15:23Z,Alice,2,sec-lab-vm,10.0.0.4
+2025-07-06T11:05:42Z,Bob,10,sec-lab-vm,52.168.1.10
+```
+
+---
+
+### Screenshots
+
+![Alert Triggered](screenshots/alert_triggered.png)
+*Sentinel alert card for local-signin.*
+
+![Incident View](screenshots/incident_view.png)
+*Incident investigation pane.*
+
+```
+Long, single-line code blocks scroll horizontally.
+```
+
+```
+End of project page.
 ```
