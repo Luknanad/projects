@@ -130,3 +130,107 @@ VBoxManage modifyvm "REMnux" --nic1 natnetwork --nat-network1 MalwareNet
 # Verify connectivity:
 FlareVM> ping 192.168.56.102
 REMnux> ping 192.168.56.101
+
+<!-- index.html -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Emotet Malware Analysis</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      line-height: 1.6;
+      background-color: #f4f4f4;
+      padding: 20px;
+      color: #333;
+    }
+    pre {
+      background-color: #272822;
+      color: #f8f8f2;
+      padding: 10px;
+      overflow-x: auto;
+    }
+    code {
+      font-family: "Courier New", Courier, monospace;
+    }
+    h2 {
+      color: #2c3e50;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+    }
+    th, td {
+      padding: 10px;
+      border: 1px solid #ddd;
+    }
+    img {
+      margin: 10px 0;
+      max-width: 100%;
+      height: auto;
+      border: 1px solid #ccc;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Malware Analysis Workflow</h1>
+
+  <h2>Static Analysis</h2>
+  <pre><code># PeStudio examination:
+pestudio.exe malware.exe
+
+# YARA scanning:
+yara -r rules.yar malware.exe</code></pre>
+
+  <h2>Dynamic Analysis</h2>
+  <pre><code># CAPEv2 sandbox submission:
+python3 cape2.py submit malware.exe
+
+# Procmon monitoring:
+Procmon.exe /BackingFile log.pml</code></pre>
+
+  <h2>Sample Analysis: Emotet Trojan</h2>
+
+  <h3>Findings</h3>
+  <ul>
+    <li><strong>Persistence:</strong> HKCU\Software\Microsoft\Windows\CurrentVersion\Run\\UpdateCheck</li>
+    <li><strong>C2 Communication:</strong> 185.130.105[.]93:443</li>
+    <li><strong>Payload Retrieval:</strong> GET /wp-content/themes/twentyten/update.php</li>
+  </ul>
+
+  <h3>IOCs</h3>
+  <table>
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Value</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Domain</td>
+        <td>update.businesshost[.]top</td>
+      </tr>
+      <tr>
+        <td>IP</td>
+        <td>185.130.105[.]93</td>
+      </tr>
+      <tr>
+        <td>Registry</td>
+        <td>HKCU\Software\...\Run\\UpdateCheck</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h3>Lab Screenshots</h3>
+  <img src="https://github.com/user-attachments/assets/flarevm-screenshot.png" alt="Flare VM Analysis">
+  <img src="https://github.com/user-attachments/assets/wireshark-capture.png" alt="Wireshark Capture">
+
+</body>
+</html>
+
