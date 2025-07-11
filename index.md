@@ -73,8 +73,8 @@ SecurityEvent
 ```csv
 TimeGenerated,AlertName,Account,LogonType,Computer,IPAddress,Severity
 2025-07-10T08:23:15Z,Local Sign‑In,Giorgi,2,sec-lab-vm,10.0.0.4,Medium
-2025-07-10T09:01:07Z,Brute‑Force Attempt,Nino,0,sec-lab-vm,192.168.1.10,High
-2025-07-10T09:01:53Z,Local Sign‑In,Nino,2,sec-lab-vm,192.168.1.10,Medium
+2025-07-10T09:01:07Z,Brute‑Force Attempt,Luka,0,sec-lab-vm,192.168.1.10,High
+2025-07-10T09:01:53Z,Local Sign‑In,Luka,2,sec-lab-vm,192.168.1.10,Medium
 
 ```
 
