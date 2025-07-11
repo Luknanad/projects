@@ -50,44 +50,41 @@ param tags object = {
   project: 'SentinelLab'
 }
 
-var vmName = '${prefix}-vm'
-var nicName = '${prefix}-nic'
-var vnetName = '${prefix}-vnet'
-var subnetName = 'default'
-var ipName = '${prefix}-publicip'
-var workspaceName = '${prefix}-law'
-var dcrName = '${prefix}-dcr'
+var names = {
+  vm: '${prefix}-vm'
+  nic: '${prefix}-nic'
+  vnet: '${prefix}-vnet'
+  subnet: 'default'
+  ip: '${prefix}-publicip'
+  law: '${prefix}-law'
+  dcr: '${prefix}-dcr'
+}
+
+resource keyVault 'Microsoft.KeyVault/vaults@2022-07-01' existing = {
+  name: keyVaultName
+}
+
+var adminPassword = listSecret(keyVault.name, '2022-07-01', keyVaultSecretName).value
 
 resource vnet 'Microsoft.Network/virtualNetworks@2021-05-01' = {
-  name: vnetName
+  name: names.vnet
   location: location
   tags: tags
   properties: {
-    addressSpace: {
-      addressPrefixes: ['10.0.0.0/16']
-    }
-    subnets: [
-      {
-        name: subnetName
-        properties: {
-          addressPrefix: '10.0.1.0/24'
-        }
-      }
-    ]
+    addressSpace: { addressPrefixes: ['10.0.0.0/16'] }
+    subnets: [ { name: names.subnet, properties: { addressPrefix: '10.0.1.0/24' } } ]
   }
 }
 
-resource publicIp 'Microsoft.Network/publicIPAddresses@2021-05-01' = {
-  name: ipName
+resource ip 'Microsoft.Network/publicIPAddresses@2021-05-01' = {
+  name: names.ip
   location: location
   tags: tags
-  properties: {
-    publicIPAllocationMethod: 'Dynamic'
-  }
+  properties: { publicIPAllocationMethod: 'Dynamic' }
 }
 
 resource nic 'Microsoft.Network/networkInterfaces@2021-05-01' = {
-  name: nicName
+  name: names.nic
   location: location
   tags: tags
   properties: {
@@ -95,35 +92,23 @@ resource nic 'Microsoft.Network/networkInterfaces@2021-05-01' = {
       {
         name: 'ipconfig1'
         properties: {
-          subnet: {
-            id: vnet.properties.subnets[0].id
-          }
+          subnet: { id: vnet.properties.subnets[0].id }
           privateIPAllocationMethod: 'Dynamic'
-          publicIPAddress: {
-            id: publicIp.id
-          }
+          publicIPAddress: { id: ip.id }
         }
       }
     ]
   }
 }
 
-resource keyVault 'Microsoft.KeyVault/vaults@2022-07-01' existing = {
-  name: keyVaultName
-}
-
-var adminPassword = listSecret(keyVaultName, '2022-07-01', keyVaultSecretName).value
-
 resource vm 'Microsoft.Compute/virtualMachines@2021-07-01' = {
-  name: vmName
+  name: names.vm
   location: location
   tags: tags
   properties: {
-    hardwareProfile: {
-      vmSize: 'Standard_B2s'
-    }
+    hardwareProfile: { vmSize: 'Standard_B2s' }
     osProfile: {
-      computerName: vmName
+      computerName: names.vm
       adminUsername: adminUsername
       adminPassword: adminPassword
     }
@@ -134,34 +119,31 @@ resource vm 'Microsoft.Compute/virtualMachines@2021-07-01' = {
         sku: '2022-Datacenter'
         version: 'latest'
       }
-      osDisk: {
-        createOption: 'FromImage'
-      }
+      osDisk: { createOption: 'FromImage' }
     }
     networkProfile: {
-      networkInterfaces: [
-        {
-          id: nic.id
-        }
-      ]
+      networkInterfaces: [ { id: nic.id } ]
     }
   }
 }
 
 resource workspace 'Microsoft.OperationalInsights/workspaces@2021-06-01' = {
-  name: workspaceName
+  name: names.law
   location: location
   tags: tags
   properties: {
-    sku: {
-      name: 'PerGB2018'
-    }
+    sku: { name: 'PerGB2018' }
     retentionInDays: 30
   }
 }
 
+resource sentinel 'Microsoft.SecurityInsights/sentinelOnboardingStates@2021-10-01' = {
+  name: workspace.name
+  properties: { state: 'Onboarded' }
+}
+
 resource dcr 'Microsoft.Insights/dataCollectionRules@2021-09-01' = {
-  name: dcrName
+  name: names.dcr
   location: location
   tags: tags
   properties: {
@@ -200,16 +182,10 @@ resource dcr 'Microsoft.Insights/dataCollectionRules@2021-09-01' = {
   }
 }
 
-resource sentinel 'Microsoft.SecurityInsights/sentinelOnboardingStates@2021-10-01' = {
-  name: workspace.name
-  properties: {
-    state: 'Onboarded'
-  }
-}
-
-output vmPublicIp string = publicIp.properties.ipAddress
+output vmPublicIp string = ip.properties.ipAddress
 output workspaceId string = workspace.id
 output vmName string = vm.name
+
 
 ```
 
@@ -290,14 +266,6 @@ TimeGenerated,AlertName,Account,LogonType,Computer,IPAddress,Severity
 2025-07-10T08:23:15Z,Local Sign‑In,Giorgi,2,sec-lab-vm,10.0.0.4,Medium
 2025-07-10T09:01:07Z,Brute‑Force Attempt,Nino,0,sec-lab-vm,192.168.1.10,High
 2025-07-10T09:01:53Z,Local Sign‑In,Nino,2,sec-lab-vm,192.168.1.10,Medium
-2025-07-10T10:45:29Z,RDP Sign‑In,Lasha,10,sec-lab-vm,203.0.113.45,Medium
-2025-07-10T11:12:04Z,Admin‑Group Change,Mariam,5,sec-lab-vm,10.0.0.4,High
-2025-07-10T12:30:47Z,Local Sign‑In,Giorgi,2,sec-lab-vm,10.0.0.4,Medium
-2025-07-10T13:05:22Z,Brute‑Force Attempt,Tea,0,sec-lab-vm,198.51.100.23,High
-2025-07-10T13:06:01Z,Local Sign‑In,Tea,2,sec-lab-vm,198.51.100.23,Medium
-2025-07-10T14:17:58Z,RDP Sign‑In,Levan,10,sec-lab-vm,198.51.100.23,Medium
-2025-07-10T15:42:13Z,Local Sign‑In,Ketevan,2,sec-lab-vm,10.0.0.4,Medium
-
 
 ```
 
