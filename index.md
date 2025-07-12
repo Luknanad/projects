@@ -136,9 +136,11 @@ REMnux> ping 192.168.56.101
 ### Static Analysis
 ```powershell
 # PeStudio examination:
+
 pestudio.exe malware.exe
 
 # YARA scanning:
+```YARA
 yara -r rules.yar malware.exe
 
 ### Dynamic Analysis
