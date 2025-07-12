@@ -122,15 +122,15 @@ This project creates an isolated malware analysis environment using VirtualBox w
 
  Create isolated network:
  
-VBoxManage natnetwork add --netname MalwareNet --network "192.168.56.0/24"
+VBoxManage natnetwork add --netname MalwareNet --network "10.0.0.1/24"
 
  Assign VMs to network:
 VBoxManage modifyvm "FlareVM" --nic1 natnetwork --nat-network1 MalwareNet
 VBoxManage modifyvm "REMnux" --nic1 natnetwork --nat-network1 MalwareNet
 
  Verify connectivity:
-FlareVM> ping 192.168.56.102
-REMnux> ping 192.168.56.101
+FlareVM> ping 10.0.0.2
+REMnux> ping 10.0.0.3
 ```
 ## Analysis Workflow
 
