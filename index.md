@@ -119,8 +119,9 @@ This project creates an isolated malware analysis environment using VirtualBox w
 
 ## Lab Configuration
 
-```bash
+
  Create isolated network:
+ 
 VBoxManage natnetwork add --netname MalwareNet --network "192.168.56.0/24"
 
  Assign VMs to network:
@@ -140,7 +141,7 @@ REMnux> ping 192.168.56.101
 pestudio.exe malware.exe
 
 # YARA scanning:
-```YARA
+
 yara -r rules.yar malware.exe
 
 ### Dynamic Analysis
@@ -164,6 +165,7 @@ Procmon.exe /BackingFile log.pml
 
 ### IOCs
 ```csv
+
 Type,Value
 Domain,update.businesshost[.]top
 IP,185.130.105[.]93
