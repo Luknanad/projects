@@ -101,8 +101,8 @@ TimeGenerated,AlertName,Account,LogonType,Computer,IPAddress,Severity
 
 ---
 
-# Malware Analysis Project 101  
-*Beginner-friendly malware analysis lab with Flare VM + REMnux*
+# Malware Analysis Project 
+* malware analysis lab with Flare VM + REMnux*
 
 ## Overview
 This project creates an isolated malware analysis environment using VirtualBox with Flare VM (Windows) and REMnux (Linux). It demonstrates static and dynamic analysis techniques to identify malware behaviors and extract IOCs.
