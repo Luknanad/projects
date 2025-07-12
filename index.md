@@ -143,6 +143,7 @@ pestudio.exe malware.exe
 # YARA scanning:
 
 yara -r rules.yar malware.exe
+```
 
 ### Dynamic Analysis
 ```bash
@@ -153,7 +154,7 @@ python3 cape2.py submit malware.exe
 Procmon.exe /BackingFile log.pml
 
 ## Sample Analysis: Emotet Trojan
-
+```
 ### Findings
 ```markdown
 ## Emotet Analysis Report
@@ -162,7 +163,7 @@ Procmon.exe /BackingFile log.pml
 - **Persistence**: HKCU\Software\Microsoft\Windows\CurrentVersion\Run\\UpdateCheck
 - **C2 Communication**: 185.130.105[.]93:443
 - **Payload Retrieval**: GET /wp-content/themes/twentyten/update.php
-
+```
 ### IOCs
 ```csv
 
@@ -170,5 +171,5 @@ Type,Value
 Domain,update.businesshost[.]top
 IP,185.130.105[.]93
 Registry,HKCU\Software\...\Run\\UpdateCheck
-
+```
 ### Lab Screenshots
