@@ -173,5 +173,5 @@ IP,185.130.105[.]93
 Registry,HKCU\Software\...\Run\\UpdateCheck
 ```
 ### Lab Screenshots
-# Host-Only Network
+ Host-Only Network
 <img width="1441" height="215" alt="image" src="https://github.com/user-attachments/assets/7315c2b4-9ace-4a6b-909e-140c552e4a12" />
