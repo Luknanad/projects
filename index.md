@@ -175,3 +175,4 @@ Registry,HKCU\Software\...\Run\\UpdateCheck
 ### Lab Screenshots
  Host-Only Network
 <img width="1441" height="215" alt="image" src="https://github.com/user-attachments/assets/7315c2b4-9ace-4a6b-909e-140c552e4a12" />
+<img width="1920" height="948" alt="image" src="https://github.com/user-attachments/assets/bf60fcb0-c583-437a-a624-da22dd97b9fb" />
