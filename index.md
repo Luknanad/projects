@@ -187,7 +187,7 @@ Registry,HKCU\Software\...\Run\\UpdateCheck
 
 
 
-# Kutaisi International University Network Implementation 
+# Kutaisi University Network Implementation 
 
 This project implements a secure, segmented network for Kutaisi University using Cisco Packet Tracer, featuring VLAN segmentation, router-on-a-stick architecture, DHCP services, and RIPv2 routing.
 
@@ -245,5 +245,10 @@ router rip
  network 192.168.10.0
 ```
 ### Screenshots
+1.
 <img width="1900" height="695" alt="image" src="https://github.com/user-attachments/assets/7174c625-de62-42b5-ac6b-3db6450d78b3" />
+
+
+
+2.
 <img width="1346" height="560" alt="image" src="https://github.com/user-attachments/assets/6caaca83-a5a6-4d42-a76b-4df3c851f3d4" />
