@@ -246,3 +246,4 @@ router rip
 ```
 ### Screenshots
 <img width="1900" height="695" alt="image" src="https://github.com/user-attachments/assets/7174c625-de62-42b5-ac6b-3db6450d78b3" />
+<img width="1346" height="560" alt="image" src="https://github.com/user-attachments/assets/6caaca83-a5a6-4d42-a76b-4df3c851f3d4" />
