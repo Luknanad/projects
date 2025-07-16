@@ -110,10 +110,10 @@ This project creates an isolated malware analysis environment using VirtualBox w
 ## Objectives
 > Build practical malware analysis skills in a safe environment
 
-1. Create isolated VirtualBox network for malware analysis
-2. Configure Flare VM (Windows) and REMnux (Linux) tools
-3. Analyze malware samples using hybrid techniques
-4. Document findings in professional reports
+* Create isolated VirtualBox network for malware analysis
+* Configure Flare VM (Windows) and REMnux (Linux) tools
+* Analyze malware samples using hybrid techniques
+* Document findings in professional reports
 
 ---
 
@@ -184,3 +184,65 @@ Registry,HKCU\Software\...\Run\\UpdateCheck
 
  2.
 <img width="1920" height="948" alt="image" src="https://github.com/user-attachments/assets/bf60fcb0-c583-437a-a624-da22dd97b9fb" />
+
+
+
+# Kutaisi International University Network Implementation 
+
+This project implements a secure, segmented network for Kutaisi University using Cisco Packet Tracer, featuring VLAN segmentation, router-on-a-stick architecture, DHCP services, and RIPv2 routing.
+
+## Objectives
+
+* Configure VLAN segmentation for staff and students
+* Set up router-on-a-stick for inter-VLAN routing
+* Deploy DHCP services for automatic IP assignment
+* Implement RIPv2 for dynamic routing
+* Establish secure access port configurations
+
+## Network Configurations
+
+### core setup
+```cisco
+! VLAN CONFIGURATION
+vlan 90
+ name Staff
+vlan 100
+ name Students
+
+! ACCESS PORTS
+interface range fa0/1-24
+ switchport mode access
+ switchport access vlan 100
+
+! TRUNK PORT
+interface gig1/0/1
+ switchport mode trunk
+ ```
+## Router configuration
+```cisco
+! ROUTER-ON-A-STICK
+interface gig0/0.90
+ encapsulation dot1Q 90
+ ip address 192.168.9.1 255.255.255.0
+
+interface gig0/0.100
+ encapsulation dot1Q 100
+ ip address 192.168.10.1 255.255.255.0
+
+! DHCP SERVICES
+ip dhcp pool staff-pool
+ network 192.168.9.0 255.255.255.0
+ default-router 192.168.9.1
+
+ip dhcp pool student-pool
+ network 192.168.10.0 255.255.255.0
+ default-router 192.168.10.1
+
+! RIPv2 ROUTING
+router rip
+ version 2
+ network 192.168.9.0
+ network 192.168.10.0
+```
+### Screenshots
+<img width="1900" height="695" alt="image" src="https://github.com/user-attachments/assets/7174c625-de62-42b5-ac6b-3db6450d78b3" />
