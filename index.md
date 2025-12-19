@@ -83,7 +83,9 @@ TimeGenerated,AlertName,Account,LogonType,Computer,IPAddress,Severity
 ### Screenshots
 
 <img width="1864" height="452" alt="image" src="https://github.com/user-attachments/assets/0a09259e-6e2b-4138-9544-9c947ccc904a" />
-<img width="1808" height="381" alt="image" src="https://github.com/user-attachments/assets/4a6a20bc-5c9b-45e2-a599-22cf8561c9c7" />
+<img width="998" height="318" alt="{64708812-9106-40B1-81A2-4AAD19A5E6BC}" src="https://github.com/user-attachments/assets/10d5753f-b04a-42fd-912f-3d1e4bd1f854" />
+
+" />
 
 
 <h3 style="font-size: 20px; color: #34495e;">Outcome</h3>
