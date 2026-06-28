@@ -296,7 +296,7 @@ IOC-Enrichment/
 └── README.md
 
 
-## Input Example (`suspicious_ips.txt`)
+## Input Example (suspicious_ips.txt)
 ```txt
 8.8.8.8
 1.1.1.1
@@ -428,8 +428,10 @@ ioc,malicious,suspicious,harmless,verdict
 ```
 ### Screenshots
 
-<img width="1579" height="679" alt="{CE35BDB8-C2EB-442C-B36B-037AA3B4E475}" src="https://github.com/user-attachments/assets/9c743663-a5c4-4a63-bb73-84a500f8f620" />
+<img width="1194" height="772" alt="{825C700A-FB7A-4AE4-A998-274FEF926C22}" src="https://github.com/user-attachments/assets/07ebd56d-0b5a-4696-9273-cf9ef74eb6fd" />
 
-<img width="793" height="153" alt="{ADF57F79-BD20-4E64-8405-E6C59F8A309C}" src="https://github.com/user-attachments/assets/a9b0e57e-0cc2-42c4-afc4-76dd3d71de52" />
+
+<img width="1200" height="180" alt="{A735CF68-C265-47A7-A2B2-B0BB9667BC26}" src="https://github.com/user-attachments/assets/0a494835-b719-44b0-b81a-f54ffd2370f6" />
+
 
 
