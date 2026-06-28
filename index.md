@@ -88,7 +88,7 @@ TimeGenerated,AlertName,Account,LogonType,Computer,IPAddress,Severity
 " />
 
 
-<h3 style="font-size: 20px; color: #34495e;">Outcome</h3>
+<h3 style="font-size: 20px; color: #34495e;"> Outcome</h3>
 <p>
   Successfully built a lightweight SIEM solution to detect key TTPs from MITRE ATT&CK (Initial Access and Credential Access). This project demonstrates how to leverage Azure-native tools for:
 </p>
