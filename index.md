@@ -263,7 +263,12 @@ router rip
 <img width="1346" height="560" alt="image" src="https://github.com/user-attachments/assets/6caaca83-a5a6-4d42-a76b-4df3c851f3d4" />
 
 
+
+
+
+
 ---
+
 
 # IOC Enrichment Tool (VirusTotal Bulk Checker)
 
@@ -411,3 +416,20 @@ df.to_csv(OUTPUT_PATH, index=False)
 print(f"\n[+] Done! Report saved to {OUTPUT_FILE}")
 print(f"[+] Malicious IPs found: {df[df['verdict'] == 'MALICIOUS'].shape[0]}")
 ```
+
+## Sample Output (report.csv)
+```
+ioc,malicious,suspicious,harmless,verdict
+8.8.8.8,0,0,70,CLEAN
+1.1.1.1,0,0,72,CLEAN
+185.220.101.1,12,5,45,MALICIOUS
+104.16.132.229,1,2,60,SUSPICIOUS
+45.33.32.156,0,0,55,CLEAN
+```
+### Screenshots
+
+<img width="1579" height="679" alt="{CE35BDB8-C2EB-442C-B36B-037AA3B4E475}" src="https://github.com/user-attachments/assets/9c743663-a5c4-4a63-bb73-84a500f8f620" />
+
+<img width="793" height="153" alt="{ADF57F79-BD20-4E64-8405-E6C59F8A309C}" src="https://github.com/user-attachments/assets/a9b0e57e-0cc2-42c4-afc4-76dd3d71de52" />
+
+
