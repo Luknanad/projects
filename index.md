@@ -301,6 +301,7 @@ IOC-Enrichment/
 ```
 ## Main Script (vt_lookup.py)
 
+```
 import os
 import requests   
 import pandas     
@@ -409,3 +410,4 @@ df.to_csv(OUTPUT_PATH, index=False)
 
 print(f"\n[+] Done! Report saved to {OUTPUT_FILE}")
 print(f"[+] Malicious IPs found: {df[df['verdict'] == 'MALICIOUS'].shape[0]}")
+```
