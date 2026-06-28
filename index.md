@@ -22,7 +22,7 @@ This project deploys a Windows Server 2022 VM in Azure, forwards its Windows Se
    * Admin‑group membership changes (Events 4728, 4729, 4732, 4733)
 4. Validate with sample alerts and screenshots.
 
----
+
 
 
 ## Detection Rules (KQL)
