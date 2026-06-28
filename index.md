@@ -261,3 +261,151 @@ router rip
 
 2.
 <img width="1346" height="560" alt="image" src="https://github.com/user-attachments/assets/6caaca83-a5a6-4d42-a76b-4df3c851f3d4" />
+
+
+---
+
+# IOC Enrichment Tool (VirusTotal Bulk Checker)
+
+This project is a **Python automation tool** that takes a list of suspicious Indicators of Compromise (IOCs) — IPs, domains, or file hashes — queries the VirusTotal API in bulk, and generates a clean, analyst-ready CSV report. 
+
+It is one of the most practical and frequently used daily automations for SOC analysts, Threat Intelligence teams, and Incident Responders.
+
+## Objectives
+> Build a reusable IOC enrichment script that integrates with VirusTotal’s public API, handles rate limiting, processes multiple indicator types, and produces professional CSV output for reporting and ticketing systems.
+
+1. Set up a clean Python project environment with required dependencies (`requests`, `pandas`).
+2. Implement secure API key handling and error management for VirusTotal lookups.
+3. Support bulk processing of IOCs from a simple `.txt` input file.
+4. Generate enriched results with verdict logic (MALICIOUS / SUSPICIOUS / CLEAN) based on engine detections.
+5. Export results to a structured CSV report suitable for Excel, SIEM ingestion, or ticketing tools.
+6. Demonstrate proper rate-limit handling and logging for production-grade use.
+
+---
+
+## Project Structure
+IOC-Enrichment/
+├── suspicious_ips.txt          # Input file (one IOC per line)
+├── vt_lookup.py                # Main automation script
+├── report.csv                  # Generated enriched report
+└── README.md
+
+
+## Input Example (`suspicious_ips.txt`)
+```txt
+8.8.8.8
+1.1.1.1
+185.220.101.1
+104.16.132.229
+45.33.32.156
+```
+## Main Script (vt_lookup.py)
+
+import os
+import requests   
+import pandas     
+import time      
+
+
+
+API_KEY = "****************************"   
+INPUT_FILE = r"C:\Desktop\python\IOC Enrichement\suspicious_ips.csv" 
+OUTPUT_FILE = "report.csv"         
+
+
+BASE_DIR = os.path.dirname(__file__)
+INPUT_PATH = os.path.join(BASE_DIR, INPUT_FILE)
+OUTPUT_PATH = os.path.join(BASE_DIR, OUTPUT_FILE)
+
+
+
+if INPUT_FILE.lower().endswith(".csv"):
+   
+    df_in = pandas.read_csv(INPUT_PATH)
+    if "ip" in df_in.columns:
+        ip_list = df_in["ip"].dropna().astype(str).str.strip().tolist()
+    else:
+        ip_list = df_in.iloc[:, 0].dropna().astype(str).str.strip().tolist()
+else:
+    with open(INPUT_PATH, "r") as f:
+       
+        ip_list = f.read().strip().splitlines()
+
+print(f"[*] Loaded {len(ip_list)} IPs to check")
+
+
+def check_ip(ip):
+    """
+    Sends one IP to VirusTotal's API.
+    Returns a dictionary with the verdict counts.
+    """
+
+   
+    url = f"https://www.virustotal.com/api/v3/ip_addresses/{ip}"
+
+    
+    headers = {
+        "x-apikey": API_KEY
+    }
+
+    
+    response = requests.get(url, headers=headers)
+
+ 
+    if response.status_code != 200:
+        print(f"  [!] Error checking {ip} — status: {response.status_code}")
+        return {
+            "ip": ip,
+            "malicious": "ERROR",
+            "suspicious": "ERROR",
+            "harmless": "ERROR",
+            "verdict": "ERROR"
+        }
+
+    
+    data = response.json()
+
+   
+    stats = data["data"]["attributes"]["last_analysis_stats"]
+
+    malicious  = stats["malicious"]   
+    suspicious = stats["suspicious"]   
+    harmless   = stats["harmless"]     
+
+   
+    if malicious >= 5:
+        verdict = "MALICIOUS"
+    elif malicious >= 1 or suspicious >= 3:
+        verdict = "SUSPICIOUS"
+    else:
+        verdict = "CLEAN"
+
+    return {
+        "ip":         ip,
+        "malicious":  malicious,
+        "suspicious": suspicious,
+        "harmless":   harmless,
+        "verdict":    verdict
+    }
+
+
+results = []  
+
+for ip in ip_list:
+    print(f"  [*] Checking {ip}...")
+    result = check_ip(ip)         
+    results.append(result)         
+    print(f"      → Verdict: {result['verdict']}")
+    time.sleep(15)  
+                  
+
+
+
+df = pandas.DataFrame(results)
+
+
+df.to_csv(OUTPUT_PATH, index=False)
+
+
+print(f"\n[+] Done! Report saved to {OUTPUT_FILE}")
+print(f"[+] Malicious IPs found: {df[df['verdict'] == 'MALICIOUS'].shape[0]}")
