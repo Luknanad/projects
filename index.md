@@ -65,7 +65,7 @@ SecurityEvent
 | project TimeGenerated, SubjectAccount, TargetAccount
 ```
 
----
+
 
 
 ##  Alerts Export
@@ -78,7 +78,7 @@ TimeGenerated,AlertName,Account,LogonType,Computer,IPAddress,Severity
 
 ```
 
----
+
 
 ### Screenshots
 
@@ -117,7 +117,7 @@ This project creates an isolated malware analysis environment using VirtualBox w
 * Analyze malware samples using hybrid techniques
 * Document findings in professional reports
 
----
+
 
 ## Lab Configuration
 ```bash
