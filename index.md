@@ -277,7 +277,6 @@ This project is a **Python automation tool** that takes a list of suspicious Ind
 It is one of the most practical and frequently used daily automations for SOC analysts, Threat Intelligence teams, and Incident Responders.
 
 ## Objectives
-> Build a reusable IOC enrichment script that integrates with VirusTotal’s public API, handles rate limiting, processes multiple indicator types, and produces professional CSV output for reporting and ticketing systems.
 
 1. Set up a clean Python project environment with required dependencies (`requests`, `pandas`).
 2. Implement secure API key handling and error management for VirusTotal lookups.
