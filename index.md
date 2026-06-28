@@ -270,7 +270,7 @@ router rip
 ---
 
 
-# IOC Enrichment Tool (VirusTotal Bulk Checker)
+# IOC Enrichment Tool 
 
 This project is a **Python automation tool** that takes a list of suspicious Indicators of Compromise (IOCs) — IPs, domains, or file hashes — queries the VirusTotal API in bulk, and generates a clean, analyst-ready CSV report. 
 
@@ -288,12 +288,6 @@ It is one of the most practical and frequently used daily automations for SOC an
 
 ---
 
-## Project Structure
-IOC-Enrichment/
-├── suspicious_ips.txt          # Input file (one IOC per line)
-├── vt_lookup.py                # Main automation script
-├── report.csv                  # Generated enriched report
-└── README.md
 
 
 ## Input Example (suspicious_ips.txt)
